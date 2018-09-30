@@ -1,8 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
-import time
-turo_sfo = "https://turo.com/search?airportCode=SFO&customDelivery=true&defaultZoomLevel=11&endDate=10%2F07%2F2018&endTime=22%3A00&international=true&isMapSearch=false&itemsPerPage=200&location=SFO%20%E2%80%94%20San%20Francisco%20International%20Airport%2C%20San%20Francisco%2C%20CA&locationType=Airport&maximumDistanceInMiles=30&sortType=RELEVANCE&startDate=10%2F06%2F2018&startTime=10%3A00"
+import time, sys
+turo_sfo = "https://turo.com/search?airportCode=SFO&endDate=10%2F07%2F2018&endTime=22%3A00&itemsPerPage=200&locationType=Airport&sortType=RELEVANCE&startDate=10%2F06%2F2018&startTime=10%3A00"
 page = requests.get(turo_sfo)
 
 browser = webdriver.Chrome()
@@ -10,8 +10,18 @@ browser.get(turo_sfo)
 time.sleep(5)
 page = browser.page_source
 # browser.close()
+
 soup = BeautifulSoup(page, 'html.parser')
-print (soup.prettify())
+# print (soup.prettify())
+list_1 = soup.findAll("a", {"class":"vehicleCard"})
+if (len(list_1) == 0):
+    list_1 = soup.findAll("a", {"class":"vehicleWithDetails searchResult"})
+if (len(list_1) == 0):
+    print("Cannot fetch list of results")
+    sys.exit(0)
+for element in list_1:
+    print("https://turo.com"+element['href'])
+    # print(element)
 # for a_link in soup.findAll("a", {"class":"vehicleCard"}):    
 #     print(a_link)
 
